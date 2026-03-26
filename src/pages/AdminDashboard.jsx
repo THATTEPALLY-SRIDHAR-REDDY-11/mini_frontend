@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react';
 import { driverApi, pickupApi } from '../services/api.js';
+import { getCurrentUser } from '../services/auth.js';
 
 function AdminDashboard() {
+  const user = getCurrentUser();
   const [drivers, setDrivers] = useState([]);
   const [pickups, setPickups] = useState([]);
   const [driverForm, setDriverForm] = useState({ name: '', phone: '', vehicleNumber: '' });
   const [assignments, setAssignments] = useState({});
+  const [message, setMessage] = useState('');
 
   const loadData = async () => {
     const [driversResponse, pickupsResponse] = await Promise.all([driverApi.list(), pickupApi.list()]);
     setDrivers(driversResponse.data);
-    setPickups(pickupsResponse.data.filter((p) => p.status === 'REQUESTED'));
+    setPickups((pickupsResponse.data || []).filter((p) => p.status === 'REQUESTED' || p.status === 'ASSIGNED'));
   };
 
   useEffect(() => {
@@ -21,6 +24,7 @@ function AdminDashboard() {
     e.preventDefault();
     await driverApi.create(driverForm);
     setDriverForm({ name: '', phone: '', vehicleNumber: '' });
+    setMessage('Driver added successfully.');
     loadData();
   };
 
@@ -30,12 +34,15 @@ function AdminDashboard() {
       return;
     }
     await pickupApi.assign(pickupId, driverId);
+    setMessage('Driver assigned successfully.');
     loadData();
   };
 
   return (
-    <div className="card p-4">
+    <div className="card p-4 shadow-sm border-0">
       <h4>Admin Dashboard</h4>
+      <div className="alert alert-light border mt-2">Logged in as: <strong>{user?.name}</strong> ({user?.role})</div>
+      {message && <div className="alert alert-success">{message}</div>}
 
       <h6 className="mt-3">Add Driver</h6>
       <form onSubmit={addDriver} className="row g-2 my-2">
@@ -59,6 +66,7 @@ function AdminDashboard() {
           <tr>
             <th>Pickup ID</th>
             <th>Donation ID</th>
+            <th>Status</th>
             <th>Select Driver</th>
             <th>Action</th>
           </tr>
@@ -68,6 +76,7 @@ function AdminDashboard() {
             <tr key={p.id}>
               <td>{p.id}</td>
               <td>{p.donationId}</td>
+              <td>{p.status}</td>
               <td>
                 <select
                   className="form-select"
