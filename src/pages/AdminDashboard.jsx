@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { driverApi, pickupApi } from '../services/api.js';
 import { getCurrentUser } from '../services/auth.js';
+import AIChatSearch from '../components/AIChatSearch.jsx';
 
 function AdminDashboard() {
   const user = getCurrentUser();
@@ -98,6 +99,8 @@ function AdminDashboard() {
           ))}
         </tbody>
       </table>
+
+      <AIChatSearch role={user?.role} userId={user?.id} />
     </div>
   );
 }

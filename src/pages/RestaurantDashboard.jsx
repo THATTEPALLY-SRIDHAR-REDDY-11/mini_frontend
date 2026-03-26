@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { donationApi } from '../services/api.js';
 import { getCurrentUser } from '../services/auth.js';
+import AIChatSearch from '../components/AIChatSearch.jsx';
 
 function RestaurantDashboard() {
   const user = getCurrentUser();
@@ -101,6 +102,8 @@ function RestaurantDashboard() {
           ))}
         </tbody>
       </table>
+
+      <AIChatSearch role={user?.role} userId={user?.id} />
     </div>
   );
 }

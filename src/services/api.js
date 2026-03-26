@@ -31,4 +31,8 @@ export const driverApi = {
   list: () => api.get('/drivers')
 };
 
+export const aiApi = {
+  search: (payload) => api.post('/ai/search', payload)
+};
+
 export default api;

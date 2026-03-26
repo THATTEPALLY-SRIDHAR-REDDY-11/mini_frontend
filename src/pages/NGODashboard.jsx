@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { donationApi, pickupApi } from '../services/api.js';
 import { getCurrentUser } from '../services/auth.js';
+import AIChatSearch from '../components/AIChatSearch.jsx';
 
 function NGODashboard() {
   const user = getCurrentUser();
@@ -105,6 +106,8 @@ function NGODashboard() {
           ))}
         </tbody>
       </table>
+
+      <AIChatSearch role={user?.role} userId={user?.id} />
     </div>
   );
 }
